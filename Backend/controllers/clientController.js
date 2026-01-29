@@ -26,27 +26,18 @@ const createClient = async (req, res) => {
         if (req.file) {
             try {
                 console.log('Uploading to Cloudinary...');
-                // Upload to Cloudinary
-                const result = await new Promise((resolve, reject) => {
-                    const uploadStream = cloudinary.uploader.upload_stream(
-                        {
-                            folder: 'flipr-task/clients',
-                            transformation: [{ width: 450, height: 350, crop: 'fill' }],
-                        },
-                        (error, result) => {
-                            if (error) {
-                                console.error('Cloudinary callback error:', error);
-                                reject(error);
-                            } else {
-                                console.log('Cloudinary upload success:', result.secure_url);
-                                resolve(result);
-                            }
-                        }
-                    );
-                    uploadStream.end(req.file.buffer);
+                // Convert buffer to base64 data URI
+                const b64 = Buffer.from(req.file.buffer).toString('base64');
+                const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+                
+                // Upload to Cloudinary using base64
+                const result = await cloudinary.uploader.upload(dataURI, {
+                    folder: 'flipr-task/clients',
+                    transformation: [{ width: 450, height: 350, crop: 'fill' }],
                 });
+                
                 imagePath = result.secure_url;
-                console.log('Image path set to:', imagePath);
+                console.log('Cloudinary upload success:', imagePath);
             } catch (cloudinaryError) {
                 console.error('Cloudinary upload failed:', cloudinaryError.message);
                 return res.status(500).json({ message: 'Image upload failed: ' + cloudinaryError.message });
