@@ -4,6 +4,7 @@ import api, { imgBaseURL } from '../utils/api';
 import face1 from '../assets/face1.svg';
 import face2 from '../assets/face2.svg';
 import face3 from '../assets/face3.svg';
+import avatar4 from '../assets/avatar6@3x.png';
 
 const Clients = () => {
     const [clients, setClients] = useState([]);
@@ -20,7 +21,15 @@ const Clients = () => {
         fetchClients();
     }, []);
 
-    const clientImages = [face1, face2, face3];
+    const clientImages = [face1, face2, face3, avatar4];
+
+    // Helper function to get proper image source
+    const getImageSrc = (client, index) => {
+        if (client.image && client.image.startsWith('http')) {
+            return client.image;
+        }
+        return clientImages[index % clientImages.length];
+    };
 
     return (
         <section className="py-20 bg-gray-50">
@@ -31,14 +40,14 @@ const Clients = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
-                    {clients.length > 0 ? clients.slice(0, 3).map((client, index) => (
+                    {clients.length > 0 ? clients.map((client, index) => (
                         <div key={client._id} className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow relative h-full flex flex-col">
                             <div className="flex items-center mb-6">
                                 <img
-                                    src={client.image?.startsWith('http') ? client.image : clientImages[index % 3]}
+                                    src={getImageSrc(client, index)}
                                     alt={client.name}
                                     className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-primary flex-shrink-0"
-                                    onError={(e) => e.target.src = clientImages[index % 3]}
+                                    onError={(e) => e.target.src = clientImages[index % clientImages.length]}
                                 />
                                 <div>
                                     <h4 className="font-bold text-lg text-secondary line-clamp-1">{client.name}</h4>
