@@ -30,16 +30,15 @@ const createClient = async (req, res) => {
                 const b64 = Buffer.from(req.file.buffer).toString('base64');
                 const dataURI = `data:${req.file.mimetype};base64,${b64}`;
                 
-                // Upload to Cloudinary using base64
+                // Upload to Cloudinary - simple upload without transformations
                 const result = await cloudinary.uploader.upload(dataURI, {
                     folder: 'flipr-task/clients',
-                    transformation: [{ width: 450, height: 350, crop: 'fill' }],
                 });
                 
                 imagePath = result.secure_url;
                 console.log('Cloudinary upload success:', imagePath);
             } catch (cloudinaryError) {
-                console.error('Cloudinary upload failed:', cloudinaryError.message);
+                console.error('Cloudinary upload failed:', cloudinaryError);
                 return res.status(500).json({ message: 'Image upload failed: ' + cloudinaryError.message });
             }
         }
