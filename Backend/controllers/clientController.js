@@ -1,5 +1,4 @@
 const Client = require('../models/Client');
-const cloudinary = require('../config/cloudinary');
 
 // @desc    Get all clients
 // @route   GET /api/clients
@@ -19,28 +18,13 @@ const getClients = async (req, res) => {
 const createClient = async (req, res) => {
     try {
         const { name, designation, description } = req.body;
-        let imagePath = req.body.image || '';
+        let imagePath = '';
 
-        console.log('Creating client, file received:', req.file ? 'Yes' : 'No');
-
+        // Use local file storage
         if (req.file) {
-            try {
-                console.log('Uploading to Cloudinary...');
-                // Convert buffer to base64 data URI
-                const b64 = Buffer.from(req.file.buffer).toString('base64');
-                const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-                
-                // Upload to Cloudinary - simple upload without transformations
-                const result = await cloudinary.uploader.upload(dataURI, {
-                    folder: 'flipr-task/clients',
-                });
-                
-                imagePath = result.secure_url;
-                console.log('Cloudinary upload success:', imagePath);
-            } catch (cloudinaryError) {
-                console.error('Cloudinary upload failed:', cloudinaryError);
-                return res.status(500).json({ message: 'Image upload failed: ' + cloudinaryError.message });
-            }
+            // Create URL path for the uploaded file
+            imagePath = `/uploads/${req.file.filename}`;
+            console.log('Image saved locally:', imagePath);
         }
 
         const client = new Client({
