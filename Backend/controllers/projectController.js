@@ -21,8 +21,11 @@ const createProject = async (req, res) => {
         const { name, description } = req.body;
         let imagePath = req.body.image || '';
 
+        console.log('Creating project, file received:', req.file ? 'Yes' : 'No');
+
         if (req.file) {
             try {
+                console.log('Uploading to Cloudinary...');
                 // Upload to Cloudinary
                 const result = await new Promise((resolve, reject) => {
                     const uploadStream = cloudinary.uploader.upload_stream(
@@ -31,16 +34,22 @@ const createProject = async (req, res) => {
                             transformation: [{ width: 450, height: 350, crop: 'fill' }],
                         },
                         (error, result) => {
-                            if (error) reject(error);
-                            else resolve(result);
+                            if (error) {
+                                console.error('Cloudinary callback error:', error);
+                                reject(error);
+                            } else {
+                                console.log('Cloudinary upload success:', result.secure_url);
+                                resolve(result);
+                            }
                         }
                     );
                     uploadStream.end(req.file.buffer);
                 });
                 imagePath = result.secure_url;
+                console.log('Image path set to:', imagePath);
             } catch (cloudinaryError) {
                 console.error('Cloudinary upload failed:', cloudinaryError.message);
-                // Continue without image if Cloudinary fails
+                return res.status(500).json({ message: 'Image upload failed: ' + cloudinaryError.message });
             }
         }
 
