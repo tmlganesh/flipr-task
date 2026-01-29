@@ -1,7 +1,5 @@
 const Client = require('../models/Client');
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('../config/cloudinary');
 
 // @desc    Get all clients
 // @route   GET /api/clients
@@ -21,22 +19,25 @@ const getClients = async (req, res) => {
 const createClient = async (req, res) => {
     try {
         const { name, designation, description } = req.body;
-        let imagePath = req.body.image || ''; // Use req.body.image as fallback
+        let imagePath = req.body.image || '';
 
         if (req.file) {
-            const filename = `client-${Date.now()}.png`;
-            const uploadPath = path.join(__dirname, '../uploads', filename);
+            // Upload to Cloudinary
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: 'flipr-task/clients',
+                        transformation: [{ width: 450, height: 350, crop: 'fill' }],
+                    },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                uploadStream.end(req.file.buffer);
+            });
 
-            if (!fs.existsSync(path.join(__dirname, '../uploads'))) {
-                fs.mkdirSync(path.join(__dirname, '../uploads'), { recursive: true });
-            }
-
-            await sharp(req.file.buffer)
-                .resize(450, 350)
-                .toFormat('png')
-                .toFile(uploadPath);
-
-            imagePath = `/uploads/${filename}`;
+            imagePath = result.secure_url;
         }
 
         const client = new Client({

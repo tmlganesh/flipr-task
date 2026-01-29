@@ -1,7 +1,5 @@
 const Project = require('../models/Project');
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('../config/cloudinary');
 
 // @desc    Get all projects
 // @route   GET /api/projects
@@ -21,23 +19,25 @@ const getProjects = async (req, res) => {
 const createProject = async (req, res) => {
     try {
         const { name, description } = req.body;
-        let imagePath = req.body.image || ''; // Use req.body.image as fallback
+        let imagePath = req.body.image || '';
 
         if (req.file) {
-            const filename = `project-${Date.now()}.png`;
-            const uploadPath = path.join(__dirname, '../uploads', filename);
+            // Upload to Cloudinary
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: 'flipr-task/projects',
+                        transformation: [{ width: 450, height: 350, crop: 'fill' }],
+                    },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                uploadStream.end(req.file.buffer);
+            });
 
-            // Ensure uploads directory exists
-            if (!fs.existsSync(path.join(__dirname, '../uploads'))) {
-                fs.mkdirSync(path.join(__dirname, '../uploads'), { recursive: true });
-            }
-
-            await sharp(req.file.buffer)
-                .resize(450, 350)
-                .toFormat('png')
-                .toFile(uploadPath);
-
-            imagePath = `/uploads/${filename}`;
+            imagePath = result.secure_url;
         }
 
         const project = new Project({
