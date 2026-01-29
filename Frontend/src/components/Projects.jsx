@@ -29,10 +29,10 @@ const Projects = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {projects.length > 0 ? projects.slice(0, 3).map((project, index) => (
+                    {projects.length > 0 ? projects.map((project, index) => (
                         <div key={project._id} className="group relative overflow-hidden rounded-lg shadow-lg">
                             <img
-                                src={project.image?.startsWith('http') ? project.image : `${imgBaseURL}${project.image}`}
+                                src={project.image?.startsWith('http') ? project.image : [project1, project2, project3][index % 3]}
                                 alt={project.name}
                                 className="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500"
                                 onError={(e) => e.target.src = [project1, project2, project3][index % 3]}
