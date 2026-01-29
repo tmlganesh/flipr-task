@@ -22,22 +22,26 @@ const createClient = async (req, res) => {
         let imagePath = req.body.image || '';
 
         if (req.file) {
-            // Upload to Cloudinary
-            const result = await new Promise((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    {
-                        folder: 'flipr-task/clients',
-                        transformation: [{ width: 450, height: 350, crop: 'fill' }],
-                    },
-                    (error, result) => {
-                        if (error) reject(error);
-                        else resolve(result);
-                    }
-                );
-                uploadStream.end(req.file.buffer);
-            });
-
-            imagePath = result.secure_url;
+            try {
+                // Upload to Cloudinary
+                const result = await new Promise((resolve, reject) => {
+                    const uploadStream = cloudinary.uploader.upload_stream(
+                        {
+                            folder: 'flipr-task/clients',
+                            transformation: [{ width: 450, height: 350, crop: 'fill' }],
+                        },
+                        (error, result) => {
+                            if (error) reject(error);
+                            else resolve(result);
+                        }
+                    );
+                    uploadStream.end(req.file.buffer);
+                });
+                imagePath = result.secure_url;
+            } catch (cloudinaryError) {
+                console.error('Cloudinary upload failed:', cloudinaryError.message);
+                // Continue without image if Cloudinary fails
+            }
         }
 
         const client = new Client({

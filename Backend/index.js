@@ -1,5 +1,7 @@
-const express = require('express');
 const dotenv = require('dotenv');
+dotenv.config(); // Load environment variables FIRST before any other imports
+
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
@@ -8,8 +10,6 @@ const projectRoutes = require('./routes/projectRoutes');
 const clientRoutes = require('./routes/clientRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const subscriberRoutes = require('./routes/subscriberRoutes');
-
-dotenv.config();
 
 connectDB();
 
