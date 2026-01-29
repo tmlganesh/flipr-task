@@ -25,8 +25,12 @@ const Clients = () => {
 
     // Helper function to get proper image source
     const getImageSrc = (client, index) => {
-        if (client.image && client.image.startsWith('http')) {
-            return client.image;
+        if (client.image) {
+            if (client.image.startsWith('http')) {
+                return client.image;
+            }
+            // Local storage path
+            return `${imgBaseURL}${client.image}`;
         }
         return clientImages[index % clientImages.length];
     };

@@ -105,7 +105,7 @@ const AdminClients = () => {
                 {clients.map((client, index) => (
                     <div key={client._id} className="bg-white rounded shadow p-4 flex items-start space-x-4">
                         <img 
-                            src={client.image?.startsWith('http') ? client.image : clientImages[index % clientImages.length]} 
+                            src={client.image ? (client.image.startsWith('http') ? client.image : `${imgBaseURL}${client.image}`) : clientImages[index % clientImages.length]} 
                             alt={client.name} 
                             className="w-16 h-16 rounded-full object-cover"
                             onError={(e) => e.target.src = clientImages[index % clientImages.length]}

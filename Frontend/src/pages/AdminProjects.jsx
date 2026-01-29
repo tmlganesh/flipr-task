@@ -97,7 +97,7 @@ const AdminProjects = () => {
                 {projects.map((project, index) => (
                     <div key={project._id} className="bg-white rounded shadow overflow-hidden">
                         <img 
-                            src={project.image?.startsWith('http') ? project.image : projectImages[index % projectImages.length]} 
+                            src={project.image ? (project.image.startsWith('http') ? project.image : `${imgBaseURL}${project.image}`) : projectImages[index % projectImages.length]} 
                             alt={project.name} 
                             className="w-full h-40 object-cover"
                             onError={(e) => e.target.src = projectImages[index % projectImages.length]}

@@ -7,6 +7,19 @@ import project3 from '../assets/project-3.svg';
 
 const Projects = () => {
     const [projects, setProjects] = useState([]);
+    const projectImages = [project1, project2, project3];
+
+    // Helper function to get proper image source
+    const getImageSrc = (project, index) => {
+        if (project.image) {
+            if (project.image.startsWith('http')) {
+                return project.image;
+            }
+            // Local storage path
+            return `${imgBaseURL}${project.image}`;
+        }
+        return projectImages[index % 3];
+    };
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -32,10 +45,10 @@ const Projects = () => {
                     {projects.length > 0 ? projects.map((project, index) => (
                         <div key={project._id} className="group relative overflow-hidden rounded-lg shadow-lg">
                             <img
-                                src={project.image?.startsWith('http') ? project.image : [project1, project2, project3][index % 3]}
+                                src={getImageSrc(project, index)}
                                 alt={project.name}
                                 className="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500"
-                                onError={(e) => e.target.src = [project1, project2, project3][index % 3]}
+                                onError={(e) => e.target.src = projectImages[index % 3]}
                             />
                             <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-6">
                                 <h4 className="text-white text-xl font-bold mb-2 translate-y-4 group-hover:translate-y-0 transition duration-500">{project.name}</h4>
