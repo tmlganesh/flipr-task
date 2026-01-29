@@ -29,7 +29,7 @@ const Clients = () => {
                         <div key={client._id} className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow relative h-full flex flex-col">
                             <div className="flex items-center mb-6">
                                 <img
-                                    src={`${imgBaseURL}${client.image}`}
+                                    src={client.image?.startsWith('http') ? client.image : `${imgBaseURL}${client.image}`}
                                     alt={client.name}
                                     className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-primary flex-shrink-0"
                                     onError={(e) => e.target.src = '/assets/client-1.svg'}

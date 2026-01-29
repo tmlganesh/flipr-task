@@ -28,7 +28,7 @@ const Projects = () => {
                     {projects.length > 0 ? projects.map((project) => (
                         <div key={project._id} className="group relative overflow-hidden rounded-lg shadow-lg">
                             <img
-                                src={`${imgBaseURL}${project.image}`}
+                                src={project.image?.startsWith('http') ? project.image : `${imgBaseURL}${project.image}`}
                                 alt={project.name}
                                 className="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500"
                                 onError={(e) => e.target.src = '/assets/project-1.svg'}

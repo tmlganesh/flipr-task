@@ -76,7 +76,7 @@ const AdminProjects = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project) => (
                     <div key={project._id} className="bg-white rounded shadow overflow-hidden">
-                        <img src={`${imgBaseURL}${project.image}`} alt={project.name} className="w-full h-40 object-cover" />
+                        <img src={project.image?.startsWith('http') ? project.image : `${imgBaseURL}${project.image}`} alt={project.name} className="w-full h-40 object-cover" />
                         <div className="p-4">
                             <h4 className="font-bold text-lg">{project.name}</h4>
                             <p className="text-gray-600 text-sm mt-2">{project.description}</p>

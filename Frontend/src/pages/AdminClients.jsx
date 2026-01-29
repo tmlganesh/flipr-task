@@ -83,7 +83,7 @@ const AdminClients = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {clients.map((client) => (
                     <div key={client._id} className="bg-white rounded shadow p-4 flex items-start space-x-4">
-                        <img src={`${imgBaseURL}${client.image}`} alt={client.name} className="w-16 h-16 rounded-full object-cover" />
+                        <img src={client.image?.startsWith('http') ? client.image : `${imgBaseURL}${client.image}`} alt={client.name} className="w-16 h-16 rounded-full object-cover" />
                         <div>
                             <h4 className="font-bold text-lg">{client.name}</h4>
                             <p className="text-primary text-sm font-semibold">{client.designation}</p>
